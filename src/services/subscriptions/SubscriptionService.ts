@@ -3,10 +3,11 @@ import Stripe from 'stripe';
 
 interface SubscribeRequest {
   user_id: string;
+  plano: string
 }
 
 class SubscribeService {
-  async execute({ user_id }: SubscribeRequest) {
+  async execute({ user_id, plano }: SubscribeRequest) {
 
     const stripe = new Stripe(
       process.env.STRIPE_API_KEY,
@@ -53,6 +54,18 @@ class SubscribeService {
 
     }
 
+    const lineItems = {
+      price_data: {
+        currency: "brl",
+        product_data: {
+          name: "MyConsultoria",
+          images:[""]
+        },
+        unit_amount:1
+      },
+      
+    }
+
 
     // inicializar o nosso checkout de pagamento
     const stripeCheckoutSession = await stripe.checkout.sessions.create({
@@ -60,7 +73,7 @@ class SubscribeService {
       payment_method_types: ['card'],
       billing_address_collection: 'required',
       line_items: [
-        { price: process.env.STRIPE_PRICE, quantity: 1 }
+        plano === "Mensal" ? { price: process.env.STRIPE_PRICE, quantity: 1 } : plano ==="Trimestral" ? { price: process.env.STRIPE_PRICE2, quantity:1} :{ price: process.env.STRIPE_PRICE3, quantity: 1}
       ],
       mode: 'subscription',
       allow_promotion_codes: true,

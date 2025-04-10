@@ -8,10 +8,13 @@ class SubscriptionController{
 
         const user_id = req.user_id
 
+        const {plano} = req.body
+
         const subscribeService = new SubscribeService()
 
         const subscribe = await subscribeService.execute({
-            user_id
+            user_id,
+            plano
         })
 
 
